@@ -2,6 +2,37 @@
 
 
 
+## v1.2.1 (2024-02-14)
+
+### Fix
+
+* fix: battle.net ip ban
+
+fix ip ban by adding optional bn oauth mirror site ([`75d1523`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/75d152389ebe773d513308a1876e6ddfcd860dd0))
+
+
+## v1.2.0 (2024-02-10)
+
+### Documentation
+
+* docs: update README.md
+
+add battle.net group tag ([`92ed684`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/92ed684d358c3ba9694b788a1fef72a5fd55c639))
+
+### Feature
+
+* feat(ui): add auto export ([`0f73a86`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/0f73a869eed32d6bbcceda4da48403c30ea19a37))
+
+
+## v1.1.2 (2024-01-11)
+
+### Fix
+
+* fix: should catch `RetryError` when retry exceeded
+
+also some smol refactor for `GHAPI` ([`b3a5e69`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/b3a5e69232797422e640e03f3294f909bc602475))
+
+
 ## v1.1.1 (2024-01-10)
 
 ### Fix
