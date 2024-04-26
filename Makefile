@@ -36,7 +36,9 @@ UPX_DIR = D:/upx-4.0.2-win64
 UPX_URL = https://github.com/upx/upx/releases/download/v4.0.2/upx-4.0.2-win64.zip
 
 TARGETS_QM = $(foreach locale,$(UI_LOCALES),locales/$(locale).qm)
-TARGETS_PATCH = $(PATH_DATA)/$(LRI_DIFF) $(PATH_DATA)/$(LRI_SHA) $(PATH_DATA)/$(AH_DIFF) $(PATH_DATA)/$(AH_SHA)
+TARGETS_PATH_LRI = $(PATH_DATA)/$(LRI_DIFF) $(PATH_DATA)/$(LRI_SHA)
+TARGETS_PATH_AH = $(PATH_DATA)/$(AH_DIFF) $(PATH_DATA)/$(AH_SHA)
+TARGETS_PATCH = $(TARGETS_PATH_LRI) $(TARGETS_PATH_AH)
 TARGETS_BONUS = $(PATH_DATA_AH)/$(BONUSES_CURVES)
 TARGET_ARCHIVE = dist/archive.zip
 
@@ -86,10 +88,16 @@ dist/run_ui.exe: $(PATH_DATA_AH)/$(BONUSES_CURVES)
 
 .PHONY: data-patch
 data-patch: $(TARGETS_PATCH)
+
+.PHONY: data-patch-lri
+data-patch-lri: $(TARGETS_PATH_LRI)
 $(PATH_DATA)/$(LRI_DIFF): # $(PATH_LRI_DST), CI don't really have this file
 	python -m ah.patcher diff --out $(PATH_DATA)/$(LRI_DIFF) "$(PATH_LRI_SRC)" "$(PATH_LRI_DST)"
 $(PATH_DATA)/$(LRI_SHA):
 	python -m ah.patcher hash "$(PATH_LRI_SRC)" > "$(PATH_DATA)/$(LRI_SHA)"
+
+.PHONY: data-patch-ah
+data-patch-ah: $(TARGETS_PATH_AH)
 $(PATH_DATA)/$(AH_DIFF): # $(PATH_AH_DST), makefile can't really handle spaces in prerequisites
 	python -m ah.patcher diff --out $(PATH_DATA)/$(AH_DIFF) "$(PATH_AH_SRC)" "$(PATH_AH_DST)"
 $(PATH_DATA)/$(AH_SHA):
