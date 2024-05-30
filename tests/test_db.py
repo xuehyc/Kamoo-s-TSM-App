@@ -165,7 +165,7 @@ class TestAuctionDB(TestCase):
         n_crid = n_item = n_record_per_item = 2
         ts_base = 1000
         category = NameSpaceCategoriesEnum.STATIC
-        game_version = GameVersionEnum.CLASSIC
+        game_version = GameVersionEnum.CLASSIC_ERA
         namespace = Namespace(
             category=category,
             game_version=game_version,
@@ -253,7 +253,7 @@ class TestAuctionDB(TestCase):
         n_crid = n_item = n_record_per_item = 2
         ts_base = 1000
         category = NameSpaceCategoriesEnum.STATIC
-        game_version = GameVersionEnum.CLASSIC
+        game_version = GameVersionEnum.CLASSIC_ERA
         namespace = Namespace(
             category=category,
             game_version=game_version,
@@ -337,7 +337,7 @@ class TestAuctionDB(TestCase):
         db_path = self.tmp_dir.name
         region = "tw"
         category = NameSpaceCategoriesEnum.DYNAMIC
-        game_version = GameVersionEnum.CLASSIC
+        game_version = GameVersionEnum.CLASSIC_ERA
         namespace = Namespace(
             category=category,
             game_version=game_version,
@@ -438,7 +438,7 @@ class TestAuctionDB(TestCase):
     def make_db_file(cls, db_helper, region, crid):
         namespace = Namespace(
             category=NameSpaceCategoriesEnum.DYNAMIC,
-            game_version=GameVersionEnum.CLASSIC,
+            game_version=GameVersionEnum.CLASSIC_ERA,
             region=region,
         )
         db_type_e = DBTypeEnum.AUCTIONS

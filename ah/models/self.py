@@ -165,8 +165,8 @@ class DBFileName:
                     "faction must be None if namespace.game_version is RETAIL"
                 )
         elif self.namespace.game_version in (
+            GameVersionEnum.CLASSIC_ERA,
             GameVersionEnum.CLASSIC,
-            GameVersionEnum.CLASSIC_WLK,
         ):
             if self.db_type != DBTypeEnum.META and self.faction is None:
                 raise ValueError(
@@ -1017,7 +1017,8 @@ class MapItemStringMarketValueRecord(_RootDictMixin[ItemString, MarketValueRecor
             # for commodity, price = .buyout; buyout = .buyout
             price = auction.get_price()
             buyout = auction.get_buyout()
-            if game_version in (GameVersionEnum.CLASSIC, GameVersionEnum.CLASSIC_WLK):
+            if game_version in (GameVersionEnum.CLASSIC_ERA, GameVersionEnum.CLASSIC):
+                # TODO: check for Cata
                 # for classic:
                 # - prices are per stack
                 # - response always have both buyout and bid fields

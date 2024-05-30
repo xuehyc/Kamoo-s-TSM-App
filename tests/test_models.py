@@ -24,7 +24,7 @@ class TestModels(TestCase):
     def test_name_space(self):
         ns = Namespace(
             category=NameSpaceCategoriesEnum.DYNAMIC,
-            game_version=GameVersionEnum.CLASSIC,
+            game_version=GameVersionEnum.CLASSIC_ERA,
             region=RegionEnum.US,
         )
         expected = "dynamic-classic1x-us"
@@ -42,7 +42,7 @@ class TestModels(TestCase):
 
         ns = Namespace.from_str("dynamic-classic1x-us")
         self.assertEqual(ns.category, NameSpaceCategoriesEnum.DYNAMIC)
-        self.assertEqual(ns.game_version, GameVersionEnum.CLASSIC)
+        self.assertEqual(ns.game_version, GameVersionEnum.CLASSIC_ERA)
         self.assertEqual(ns.region, RegionEnum.US)
 
         ns = Namespace.from_str("static-us")
@@ -71,7 +71,7 @@ class TestModels(TestCase):
     def test_db_file_name(self):
         ns = Namespace(
             category=NameSpaceCategoriesEnum.DYNAMIC,
-            game_version=GameVersionEnum.CLASSIC,
+            game_version=GameVersionEnum.CLASSIC_ERA,
             region=RegionEnum.US,
         )
         ns_r = Namespace(
@@ -312,7 +312,7 @@ class TestModels(TestCase):
             helper = DBHelper(path)
             namespace = Namespace(
                 category=NameSpaceCategoriesEnum.DYNAMIC,
-                game_version=GameVersionEnum.CLASSIC,
+                game_version=GameVersionEnum.CLASSIC_ERA,
                 region=RegionEnum.US,
             )
             meta_file = helper.get_file(namespace, DBTypeEnum.META)

@@ -344,7 +344,7 @@ class TestWorkflow(TestCase):
         args = updater_parse_args(raw_args)
         self.assertEqual(args.region, RegionEnum.US)
         self.assertEqual(args.db_path, "db")
-        self.assertEqual(args.game_version, GameVersionEnum.CLASSIC_WLK)
+        self.assertEqual(args.game_version, GameVersionEnum.CLASSIC)
 
     def test_exporter_parse_args(self):
         wow_folders = [
@@ -380,7 +380,7 @@ class TestWorkflow(TestCase):
         self.assertEqual(args.db_path, expected_db_path)
         self.assertEqual(args.repo, expected_repo)
         self.assertEqual(args.gh_proxy, expected_gh_proxy)
-        self.assertEqual(args.game_version, GameVersionEnum.CLASSIC_WLK)
+        self.assertEqual(args.game_version, GameVersionEnum.CLASSIC)
         self.assertEqual(args.warcraft_base, expected_wow_base)
         self.assertEqual(args.export_region, RegionEnum.US)
         self.assertEqual(args.export_realms, {"realm1", "realm2"})

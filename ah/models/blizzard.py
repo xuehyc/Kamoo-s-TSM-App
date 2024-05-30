@@ -79,16 +79,16 @@ class NameSpaceCategoriesEnum(StrEnum_):
 
 
 class GameVersionEnum(StrEnum_):
-    CLASSIC = "classic1x"
-    CLASSIC_WLK = "classic"
+    CLASSIC_ERA = "classic1x"
+    CLASSIC = "classic"
     RETAIL = ""
 
     # namespace, warcraft install paths, tsm slug - they all have their own
     # naming conventions...
     def get_tsm_game_version(self) -> Optional[str]:
-        if self == self.CLASSIC:
+        if self == self.CLASSIC_ERA:
             return "Classic"
-        elif self == self.CLASSIC_WLK:
+        elif self == self.CLASSIC:
             return "BCC"
         elif self == self.RETAIL:
             return None
@@ -96,9 +96,9 @@ class GameVersionEnum(StrEnum_):
             raise ValueError(f"Invalid game version: {self!s}")
 
     def get_version_folder_name(self) -> str:
-        if self == self.CLASSIC:
+        if self == self.CLASSIC_ERA:
             return "_classic_era_"
-        elif self == self.CLASSIC_WLK:
+        elif self == self.CLASSIC:
             return "_classic_"
         elif self == self.RETAIL:
             return "_retail_"
