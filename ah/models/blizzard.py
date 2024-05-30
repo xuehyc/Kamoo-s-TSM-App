@@ -247,7 +247,7 @@ class AuctionItem(GenericItemInterface, _BaseModel):
     pet_quality_id: Optional[int] = None
     pet_species_id: Optional[int] = None
 
-    # NOTE: these fields are part of classic & classic wlk, but not retail
+    # NOTE: these fields are part of classic_era & classic, but not retail
     seed: Optional[int] = None
     rand: Optional[int] = None
 
@@ -340,7 +340,7 @@ class AuctionsResponse(GenericAuctionsResponseInterface, _BaseModel):
     links: Any = Field(None, alias="_links")
     connected_realm: Any = None
 
-    # NOTE: these fields are part of classic & classic wlk, but not retail
+    # NOTE: these fields are part of classic_era & classic, but not retail
     id: Any = None
     name: Any = None
 
@@ -467,7 +467,7 @@ class Realm(_BaseModel):
     # wow/realm response has this field, but not connected realm response
     links: Optional[Any] = Field(None, alias="_links")
 
-    # NOTE: on the launch day of classic SOD, there was a bug where the realm
+    # NOTE: on the launch day of classic_era SOD, there was a bug where the realm
     # API returns `None` for `name` field for some realms. this is a temporary
     # workaround for that.
     MISSING_NAMES: ClassVar[Dict[Tuple[str, str], str]] = {

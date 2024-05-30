@@ -153,8 +153,8 @@ class TestModels(TestCase):
             self.assertEqual(record.num_auctions, expected[item_id][1])
             self.assertEqual(record.min_buyout, min_price)
 
-    def test_increment_classic(self):
-        """classic auction response's "buyout" and "bid" are total price."""
+    def test_increment_classic_era(self):
+        """classic_era and classic auction response's "buyout" and "bid" are total price."""
         timestamp = 1000
         resp, expected, min_price = self.mock_response(
             "auction", 1, timestamp=timestamp, game_version=GameVersionEnum.CLASSIC_ERA
@@ -195,8 +195,8 @@ class TestModels(TestCase):
         resp = CommoditiesResponse.model_validate(obj)
         self.assertEqual(resp.get_auctions(), [])
 
-    def test_min_price_classic(self):
-        """classic auction has buyout=0 for bid-only auctions"""
+    def test_min_price_classic_era(self):
+        """classic_era and classic auction has buyout=0 for bid-only auctions"""
         obj = {
             "_links": {},
             "connected_realm": {},

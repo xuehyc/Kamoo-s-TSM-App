@@ -338,7 +338,7 @@ class TestWorkflow(TestCase):
             "--db_path",
             "db",
             "--game_version",
-            "classic_wlk",
+            "classic",
             "us",
         ]
         args = updater_parse_args(raw_args)
@@ -368,7 +368,7 @@ class TestWorkflow(TestCase):
                 "--gh_proxy",
                 f"{expected_gh_proxy}",
                 "--game_version",
-                "classic_wlk",
+                "classic",
                 "--warcraft_base",
                 f"{expected_wow_base}",
                 "us",
@@ -401,7 +401,7 @@ class TestWorkflow(TestCase):
                 "--db_path",
                 f"{db_path}",
                 "--game_version",
-                "classic",
+                "classic_era",
                 "us",
             ]
             args = updater_parse_args(raw_args)
@@ -412,7 +412,7 @@ class TestWorkflow(TestCase):
                 "--db_path",
                 f"{db_path}",
                 "--game_version",
-                "classic",
+                "classic_era",
                 "--warcraft_base",
                 f"{wow_base}",
                 "us",
@@ -454,7 +454,7 @@ class TestWorkflow(TestCase):
                 "--db_path",
                 f"{db_path}",
                 "--game_version",
-                "classic",
+                "classic_era",
                 "us",
             ]
             args = updater_parse_args(raw_args)
@@ -465,7 +465,7 @@ class TestWorkflow(TestCase):
                 "--db_path",
                 f"{db_path}",
                 "--game_version",
-                "classic",
+                "classic_era",
                 "--warcraft_base",
                 f"{wow_base}",
                 "us",
