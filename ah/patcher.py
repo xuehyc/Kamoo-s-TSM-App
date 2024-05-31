@@ -9,7 +9,7 @@ import logging
 
 from diff_match_patch import diff_match_patch
 
-from ah.tsm_exporter import TSMExporter
+from ah.fs import find_warcraft_base
 
 __all__ = (
     "PatcherBaseError",
@@ -227,7 +227,7 @@ def parse_args(args: List[str]) -> Dict[str, Any]:
         help="batch patch files.",
     )
     parser_batch_patch.set_defaults(func=batch_patch)
-    default_warcraft_base = TSMExporter.find_warcraft_base()
+    default_warcraft_base = find_warcraft_base()
     parser_batch_patch.add_argument(
         "--warcraft_base",
         type=str,
