@@ -49,8 +49,10 @@ from PyQt5.QtCore import (
 from ah import __version__
 from ah import config
 from ah.ui.main_view import Ui_MainWindow
-from ah.tsm_exporter import TSMExporter, main as exporter_main
+from ah.tsm_exporter import main as exporter_main
+from ah.tsm_installer import main as installer_main
 from ah.updater import main as updater_main
+from ah.fs import find_warcraft_base, validate_warcraft_base
 from ah.db import GithubFileForker, DBHelper
 from ah.cache import Cache
 from ah.models.base import StrEnum_
@@ -107,7 +109,7 @@ DEFAULT_SETTINGS = (
     ("settings/db_path", "db", "lineEdit_settings_db_path"),
     (
         "settings/warcraft_base",
-        TSMExporter.find_warcraft_base() or "",
+        find_warcraft_base() or "",
         "lineEdit_settings_game_path",
     ),
     (
@@ -271,7 +273,7 @@ class VisualValidator(QValidator):
 
 class WarCraftBaseValidator(VisualValidator):
     def validate(self, text: str, pos: int) -> Tuple[QValidator.State, str, int]:
-        if TSMExporter.validate_warcraft_base(text):
+        if validate_warcraft_base(text):
             state = self.State.Acceptable
 
         else:
@@ -907,6 +909,9 @@ class Window(QMainWindow, Ui_MainWindow):
             lambda: self.remove_path(self.get_db_path())
         )
 
+        # install tsm
+        self.pushButton_tools_install_tsm.clicked.connect(self.on_install_tsm)
+
         # patch tsm
         self.pushButton_tools_patch_tsm.clicked.connect(self.on_patch_tsm)
 
@@ -1290,6 +1295,39 @@ class Window(QMainWindow, Ui_MainWindow):
                 )
 
         task()
+
+    def on_install_tsm(self) -> None:
+        try:
+            args = [
+                "--warcraft_base",
+                self.get_warcraft_base(),
+            ]
+        except ConfigError as e:
+            self.popup_error(_t("MainWindow", "Config Error"), str(e))
+            return
+
+        try:
+            installer_main(args)
+        except Exception as e:
+            self._logger.error(f"Failed to install TSM: {e!r}", exc_info=True)
+            self.popup_error(_t("MainWindow", "Install TSM Error"), str(e))
+            return
+
+        # ask user to patch TSM
+        msg = _t(
+            "MainWindow",
+            "TSM installed successfully! "
+            "Do you also want to apply 'LibRealmInfo' patch (recommended)?"
+        )  # fmt: skip
+        reply = QMessageBox.question(
+            self,
+            _t("MainWindow", "Install TSM Success"),
+            msg,
+            QMessageBox.Yes,
+            QMessageBox.No,
+        )
+        if reply == QMessageBox.Yes:
+            self.on_patch_tsm()
 
     def on_patch_tsm(self) -> None:
         try:
