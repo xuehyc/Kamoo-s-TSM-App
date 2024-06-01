@@ -590,6 +590,11 @@ class Window(QMainWindow, Ui_MainWindow):
         ]
         self._lock_on_export_dropdown.extend(lock_on_any)
 
+        self._lock_on_install_tsm = [
+            self.pushButton_tools_install_tsm,
+        ]
+        self._lock_on_install_tsm.extend(lock_on_any)
+
         self.load_settings()
 
         # hacky way avoiding `load_settings` triggering `on_exporter_dropdown_change`
@@ -1297,37 +1302,46 @@ class Window(QMainWindow, Ui_MainWindow):
         task()
 
     def on_install_tsm(self) -> None:
+        # lock widgets
+        for widget in self._lock_on_install_tsm:
+            widget.setEnabled(False)
+
         try:
-            args = [
-                "--warcraft_base",
-                self.get_warcraft_base(),
-            ]
+            warcraft_base = self.get_warcraft_base()
         except ConfigError as e:
             self.popup_error(_t("MainWindow", "Config Error"), str(e))
             return
 
-        try:
-            installer_main(args)
-        except Exception as e:
-            self._logger.error(f"Failed to install TSM: {e!r}", exc_info=True)
-            self.popup_error(_t("MainWindow", "Install TSM Error"), str(e))
-            return
+        def on_final(success: bool, msg: str) -> None:
+            # unlock widgets
+            for widget in self._lock_on_install_tsm:
+                widget.setEnabled(True)
 
-        # ask user to patch TSM
-        msg = _t(
-            "MainWindow",
-            "TSM installed successfully! "
-            "Do you also want to apply 'LibRealmInfo' patch (recommended)?"
-        )  # fmt: skip
-        reply = QMessageBox.question(
-            self,
-            _t("MainWindow", "Install TSM Success"),
-            msg,
-            QMessageBox.Yes,
-            QMessageBox.No,
-        )
-        if reply == QMessageBox.Yes:
-            self.on_patch_tsm()
+            if not success:
+                self.popup_error(_t("MainWindow", "Install TSM Error"), msg)
+                return
+
+            # ask user to patch TSM
+            msg = _t(
+                "MainWindow",
+                "TSM installed successfully! "
+                "Do you also want to apply 'LibRealmInfo' patch (recommended)?"
+            )  # fmt: skip
+            reply = QMessageBox.question(
+                self,
+                _t("MainWindow", "Install TSM Success"),
+                msg,
+                QMessageBox.Yes,
+                QMessageBox.No,
+            )
+            if reply == QMessageBox.Yes:
+                self.on_patch_tsm()
+
+        @threaded(self, on_final=on_final)
+        def task(*args, **kwargs):
+            installer_main(warcraft_base=warcraft_base)
+
+        task()
 
     def on_patch_tsm(self) -> None:
         try:
