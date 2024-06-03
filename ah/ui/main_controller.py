@@ -52,7 +52,7 @@ from ah.ui.main_view import Ui_MainWindow
 from ah.tsm_exporter import main as exporter_main
 from ah.tsm_installer import main as installer_main
 from ah.updater import main as updater_main
-from ah.fs import find_warcraft_base, validate_warcraft_base
+from ah.utils import find_warcraft_base, validate_warcraft_base
 from ah.db import GithubFileForker, DBHelper
 from ah.cache import Cache
 from ah.models.base import StrEnum_
@@ -64,7 +64,7 @@ from ah.models.blizzard import (
     NameSpaceCategoriesEnum,
 )
 from ah.api import GHAPI, BNAPI, UpdateEnum
-from ah.fs import remove_path
+from ah.utils import remove_path
 from ah.patcher import main as patcher_main
 from ah.defs import SECONDS_IN
 
@@ -1310,6 +1310,8 @@ class Window(QMainWindow, Ui_MainWindow):
             warcraft_base = self.get_warcraft_base()
         except ConfigError as e:
             self.popup_error(_t("MainWindow", "Config Error"), str(e))
+            for widget in self._lock_on_install_tsm:
+                widget.setEnabled(True)
             return
 
         def on_final(success: bool, msg: str) -> None:
