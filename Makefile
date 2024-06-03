@@ -25,6 +25,7 @@ BONUSES_CURVES = bonuses_curves.json
 # if $OS is not Windows_NT, add QT_QPA_PLATFORM=xcb
 QT_ENV = $(shell if [ "$OS" == "Windows_NT" ]; then echo ""; else echo "QT_QPA_PLATFORM=xcb"; fi)
 QT_DESIGNER = $(QT_ENV) qt5-tools designer
+QT_LUPDATE = $(QT_ENV) qt5-tools lupdate
 QT_LINGUIST = $(QT_ENV) qt5-tools linguist
 QT_LRELEASE = $(QT_ENV) qt5-tools lrelease
 # remove -it when running in CI
@@ -133,7 +134,7 @@ ui-designer:
 
 .PHONY: ui-lupdate
 ui-lupdate:
-	pylupdate5.exe -translate-function '_t' $(UI_PY_FILES) -ts $(UI_TS_FILES) -noobsolete
+	$(QT_LUPDATE) -tr-function-alias 'translate+=_t' -tr-function-alias 'translate+=_translate' $(UI_PY_FILES) -ts $(UI_TS_FILES) -noobsolete
 
 .PHONY: ui-linguist
 ui-linguist:
