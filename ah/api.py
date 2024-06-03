@@ -13,6 +13,7 @@ from ah.vendors.blizzardapi import BlizzardApi
 from ah.models import Namespace
 from ah.cache import bound_cache, BoundCacheMixin, Cache
 from ah.defs import SECONDS_IN
+from ah.utils import get_release_file_name
 
 __all__ = (
     "BNAPI",
@@ -238,8 +239,16 @@ class GHAPI(BoundCacheMixin):
 
         tag = f"v{ver}"
         assets = self.get_assets_uri(user, repo, tag=tag)
-        if self.RELEASED_ARCHIVE_NAME not in assets:
-            msg = f"Failed to find {self.RELEASED_ARCHIVE_NAME!r} in release {tag!r}"
-            raise ValueError(msg)
-
-        return self.get_asset(assets[self.RELEASED_ARCHIVE_NAME])
+        # use the first available asset name
+        # this is a backward compatibility measure before 
+        # transitioning to `get_release_file_name`
+        release_fns = [
+            get_release_file_name(tag),
+            self.RELEASED_ARCHIVE_NAME,
+        ]
+        for fn in release_fns:
+            if fn in assets:
+                return self.get_asset(assets[fn])
+        
+        msg = f"Failed to find {self.RELEASED_ARCHIVE_NAME!r} in release {tag!r}"
+        raise ValueError(msg)

@@ -6,7 +6,7 @@ PATH_BUILD = build
 PATH_DATA_AH = ah/data
 PATH_LOCALES = locales
 
-WARCRAFT_BASE = $(shell python -c 'from ah.tsm_exporter import TSMExporter as T;print(T.find_warcraft_base())')
+WARCRAFT_BASE = $(shell python -c 'from ah.utils import find_warcraft_base;print(find_warcraft_base())')
 LRI = LibRealmInfo.lua
 LRI_DIFF = $(LRI).diff
 LRI_SHA = $(LRI).sha256
@@ -22,9 +22,12 @@ PATCHES = patches.json
 BONUSES = bonuses.json
 CURVES = item-curves.json
 BONUSES_CURVES = bonuses_curves.json
-QT_DESIGNER = qt5-tools designer
-QT_LINGUIST = qt5-tools linguist
-QT_LRELEASE = qt5-tools lrelease
+# if $OS is not Windows_NT, add QT_QPA_PLATFORM=xcb
+QT_ENV = $(shell if [ "$OS" == "Windows_NT" ]; then echo ""; else echo "QT_QPA_PLATFORM=xcb"; fi)
+QT_DESIGNER = $(QT_ENV) qt5-tools designer
+QT_LUPDATE = $(QT_ENV) qt5-tools lupdate
+QT_LINGUIST = $(QT_ENV) qt5-tools linguist
+QT_LRELEASE = $(QT_ENV) qt5-tools lrelease
 # remove -it when running in CI
 # https://stackoverflow.com/questions/43099116/error-the-input-device-is-not-a-tty
 # QT_LRELEASE_DOCKER = MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL="*" docker run --rm -v $(shell pwd):/app -w /app rabits/qt:5.15-desktop lrelease
@@ -131,7 +134,7 @@ ui-designer:
 
 .PHONY: ui-lupdate
 ui-lupdate:
-	pylupdate5.exe -translate-function '_t' $(UI_PY_FILES) -ts $(UI_TS_FILES) -noobsolete
+	$(QT_LUPDATE) -tr-function-alias 'translate+=_t' -tr-function-alias 'translate+=_translate' $(UI_PY_FILES) -ts $(UI_TS_FILES) -noobsolete
 
 .PHONY: ui-linguist
 ui-linguist:

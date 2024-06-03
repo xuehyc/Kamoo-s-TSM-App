@@ -49,8 +49,10 @@ from PyQt5.QtCore import (
 from ah import __version__
 from ah import config
 from ah.ui.main_view import Ui_MainWindow
-from ah.tsm_exporter import TSMExporter, main as exporter_main
+from ah.tsm_exporter import main as exporter_main
+from ah.tsm_installer import main as installer_main
 from ah.updater import main as updater_main
+from ah.utils import find_warcraft_base, validate_warcraft_base
 from ah.db import GithubFileForker, DBHelper
 from ah.cache import Cache
 from ah.models.base import StrEnum_
@@ -62,7 +64,7 @@ from ah.models.blizzard import (
     NameSpaceCategoriesEnum,
 )
 from ah.api import GHAPI, BNAPI, UpdateEnum
-from ah.fs import remove_path
+from ah.utils import remove_path
 from ah.patcher import main as patcher_main
 from ah.defs import SECONDS_IN
 
@@ -107,7 +109,7 @@ DEFAULT_SETTINGS = (
     ("settings/db_path", "db", "lineEdit_settings_db_path"),
     (
         "settings/warcraft_base",
-        TSMExporter.find_warcraft_base() or "",
+        find_warcraft_base() or "",
         "lineEdit_settings_game_path",
     ),
     (
@@ -271,7 +273,7 @@ class VisualValidator(QValidator):
 
 class WarCraftBaseValidator(VisualValidator):
     def validate(self, text: str, pos: int) -> Tuple[QValidator.State, str, int]:
-        if TSMExporter.validate_warcraft_base(text):
+        if validate_warcraft_base(text):
             state = self.State.Acceptable
 
         else:
@@ -587,6 +589,11 @@ class Window(QMainWindow, Ui_MainWindow):
             self.pushButton_exporter_export,
         ]
         self._lock_on_export_dropdown.extend(lock_on_any)
+
+        self._lock_on_install_tsm = [
+            self.pushButton_tools_install_tsm,
+        ]
+        self._lock_on_install_tsm.extend(lock_on_any)
 
         self.load_settings()
 
@@ -906,6 +913,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushButton_tools_db_clear.clicked.connect(
             lambda: self.remove_path(self.get_db_path())
         )
+
+        # install tsm
+        self.pushButton_tools_install_tsm.clicked.connect(self.on_install_tsm)
 
         # patch tsm
         self.pushButton_tools_patch_tsm.clicked.connect(self.on_patch_tsm)
@@ -1288,6 +1298,50 @@ class Window(QMainWindow, Ui_MainWindow):
                     cache=cache,
                     bn_api=bn_api,
                 )
+
+        task()
+
+    def on_install_tsm(self) -> None:
+        # lock widgets
+        for widget in self._lock_on_install_tsm:
+            widget.setEnabled(False)
+
+        try:
+            warcraft_base = self.get_warcraft_base()
+        except ConfigError as e:
+            self.popup_error(_t("MainWindow", "Config Error"), str(e))
+            for widget in self._lock_on_install_tsm:
+                widget.setEnabled(True)
+            return
+
+        def on_final(success: bool, msg: str) -> None:
+            # unlock widgets
+            for widget in self._lock_on_install_tsm:
+                widget.setEnabled(True)
+
+            if not success:
+                self.popup_error(_t("MainWindow", "Install TSM Error"), msg)
+                return
+
+            # ask user to patch TSM
+            msg = _t(
+                "MainWindow",
+                "TSM installed successfully! "
+                "Do you also want to apply 'LibRealmInfo' patch (recommended)?"
+            )  # fmt: skip
+            reply = QMessageBox.question(
+                self,
+                _t("MainWindow", "Install TSM Success"),
+                msg,
+                QMessageBox.Yes,
+                QMessageBox.No,
+            )
+            if reply == QMessageBox.Yes:
+                self.on_patch_tsm()
+
+        @threaded(self, on_final=on_final)
+        def task(*args, **kwargs):
+            installer_main(warcraft_base=warcraft_base)
 
         task()
 

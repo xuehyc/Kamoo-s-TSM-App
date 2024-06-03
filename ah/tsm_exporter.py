@@ -1,4 +1,4 @@
-from typing import List, Set, Optional
+from typing import List, Set
 import argparse
 import logging
 import sys
@@ -22,6 +22,7 @@ from ah.storage import TextFile
 from ah.db import DBHelper, GithubFileForker
 from ah.api import GHAPI
 from ah.cache import Cache
+from ah.utils import find_warcraft_base, validate_warcraft_base
 from ah import config
 
 
@@ -102,7 +103,6 @@ class TSMExporter:
     )
     NUMERIC_SET = set("0123456789")
     TSM_VERSION = 41200
-    MOCK_WARCRAFT_BASE = "fake_warcraft_base"
     TSM_HC_LABEL = "HC"
     TSM_SEASONAL_LABEL = "SoD"
     _logger = logging.getLogger("TSMExporter")
@@ -129,40 +129,6 @@ class TSMExporter:
             "TradeSkillMaster_AppHelper",
             "AppData.lua",
         )
-
-    @classmethod
-    def find_warcraft_base(cls) -> Optional[str]:
-        if "unittest" in sys.modules:
-            return cls.MOCK_WARCRAFT_BASE
-
-        if sys.platform == "win32":
-            import winreg
-        else:
-            return None
-
-        key = winreg.OpenKey(
-            winreg.HKEY_LOCAL_MACHINE,
-            r"SOFTWARE\WOW6432Node\Blizzard Entertainment\World of Warcraft",
-        )
-        path = winreg.QueryValueEx(key, "InstallPath")[0]
-        path = os.path.join(path, "..")
-        return os.path.normpath(path)
-
-    @classmethod
-    def validate_warcraft_base(cls, path: str) -> bool:
-        if not path or not os.path.isdir(path):
-            return False
-
-        # at least one version folder should exist
-        version_dirs = (
-            version.get_version_folder_name() for version in GameVersionEnum
-        )
-        if not any(
-            os.path.isdir(os.path.join(path, version)) for version in version_dirs
-        ):
-            return False
-
-        return True
 
     @classmethod
     def baseN(cls, num, b, numerals="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"):
@@ -466,7 +432,7 @@ def parse_args(raw_args):
     parser = argparse.ArgumentParser()
     default_db_path = config.DEFAULT_DB_PATH
     default_game_version = GameVersionEnum.RETAIL.name.lower()
-    default_warcraft_base = TSMExporter.find_warcraft_base()
+    default_warcraft_base = find_warcraft_base()
 
     parser.add_argument(
         "--db_path",
@@ -530,7 +496,7 @@ def parse_args(raw_args):
             f"Invalid Github proxy server given by '--gh_proxy' option, "
             f"it should be a valid URL, not {args.gh_proxy!r}."
         )
-    if not TSMExporter.validate_warcraft_base(args.warcraft_base):
+    if not validate_warcraft_base(args.warcraft_base):
         raise ValueError(
             "Invalid Warcraft installation directory, "
             "please specify it via '--warcraft_base' option. "

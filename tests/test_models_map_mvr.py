@@ -50,7 +50,7 @@ class TestModels(TestCase):
         # we generate n_half item with price avg_price + price_delta
         # and n_half item with price avg_price - price_delta
 
-        if game_version in (GameVersionEnum.CLASSIC, GameVersionEnum.CLASSIC_WLK):
+        if game_version in (GameVersionEnum.CLASSIC_ERA, GameVersionEnum.CLASSIC):
             group = [
                 ((avg_price + price_delta) * n_sample_half, n_sample_half),
                 ((avg_price - price_delta) * n_sample_half, n_sample_half),
@@ -153,14 +153,14 @@ class TestModels(TestCase):
             self.assertEqual(record.num_auctions, expected[item_id][1])
             self.assertEqual(record.min_buyout, min_price)
 
-    def test_increment_classic(self):
-        """classic auction response's "buyout" and "bid" are total price."""
+    def test_increment_classic_era(self):
+        """classic_era and classic auction response's "buyout" and "bid" are total price."""
         timestamp = 1000
         resp, expected, min_price = self.mock_response(
-            "auction", 1, timestamp=timestamp, game_version=GameVersionEnum.CLASSIC
+            "auction", 1, timestamp=timestamp, game_version=GameVersionEnum.CLASSIC_ERA
         )
         increment = MapItemStringMarketValueRecord.from_response(
-            resp, game_version=GameVersionEnum.CLASSIC
+            resp, game_version=GameVersionEnum.CLASSIC_ERA
         )
         for item_string, record in increment.items():
             item_id = item_string.id
@@ -195,8 +195,8 @@ class TestModels(TestCase):
         resp = CommoditiesResponse.model_validate(obj)
         self.assertEqual(resp.get_auctions(), [])
 
-    def test_min_price_classic(self):
-        """classic auction has buyout=0 for bid-only auctions"""
+    def test_min_price_classic_era(self):
+        """classic_era and classic auction has buyout=0 for bid-only auctions"""
         obj = {
             "_links": {},
             "connected_realm": {},
@@ -233,7 +233,7 @@ class TestModels(TestCase):
         }
         resp = AuctionsResponse.model_validate(obj)
         increment = MapItemStringMarketValueRecord.from_response(
-            resp, game_version=GameVersionEnum.CLASSIC
+            resp, game_version=GameVersionEnum.CLASSIC_ERA
         )
         itemstring = ItemString(
             type=ItemStringTypeEnum.ITEM,
@@ -282,7 +282,7 @@ class TestModels(TestCase):
         }
         resp = AuctionsResponse.model_validate(obj)
         increment = MapItemStringMarketValueRecord.from_response(
-            resp, game_version=GameVersionEnum.CLASSIC
+            resp, game_version=GameVersionEnum.CLASSIC_ERA
         )
         itemstring = ItemString(
             type=ItemStringTypeEnum.ITEM,

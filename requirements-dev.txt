@@ -1,6 +1,6 @@
-black==23.9.1
+black
 pyinstrument==4.4.0
-coverage-lcov==0.2.4
+coverage-lcov
 pyqt5-plugins==5.15.9.2.3
 pyqt5-tools==5.15.9.3.3
 qt5-applications==5.15.2.2.3

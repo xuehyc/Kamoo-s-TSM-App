@@ -280,6 +280,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="pushButton_tools_install_tsm">
+          <property name="text">
+           <string>Update TSM &amp;&amp; AppHelper</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="pushButton_tools_patch_tsm">
           <property name="text">
            <string>Patch LibRealmInfo</string>

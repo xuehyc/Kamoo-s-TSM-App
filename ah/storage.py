@@ -2,7 +2,7 @@ import os
 from gzip import GzipFile
 import pathlib
 
-from ah.fs import ensure_path, remove_file
+from ah.utils import ensure_path, remove_file
 
 
 class BaseFile:

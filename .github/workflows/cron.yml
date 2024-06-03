@@ -65,9 +65,9 @@ jobs:
         BN_OAUTH_URL_CN: ${{ vars.BN_OAUTH_URL_CN }}
       run: >
         printf %s\\n 
-        retail tw classic tw classic_wlk tw 
-        retail kr classic kr classic_wlk kr 
-        classic us classic eu |
+        retail tw classic_era tw classic tw 
+        retail kr classic_era kr classic kr 
+        classic_era us classic_era eu |
         xargs -n2 
         python -m ah.updater 
         ${{ inputs.compress_all && '--compress_all ' || ' ' }}

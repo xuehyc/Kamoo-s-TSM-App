@@ -23,7 +23,7 @@ from ah.models import (
 from ah.db import DBHelper
 from ah.updater import main as updater_main, parse_args as updater_parse_args
 from ah.tsm_exporter import main as exporter_main, parse_args as exporter_parse_args
-from ah.fs import ensure_path
+from ah.utils import ensure_path
 from ah.defs import SECONDS_IN
 from ah.storage import BinaryFile
 
@@ -338,13 +338,13 @@ class TestWorkflow(TestCase):
             "--db_path",
             "db",
             "--game_version",
-            "classic_wlk",
+            "classic",
             "us",
         ]
         args = updater_parse_args(raw_args)
         self.assertEqual(args.region, RegionEnum.US)
         self.assertEqual(args.db_path, "db")
-        self.assertEqual(args.game_version, GameVersionEnum.CLASSIC_WLK)
+        self.assertEqual(args.game_version, GameVersionEnum.CLASSIC)
 
     def test_exporter_parse_args(self):
         wow_folders = [
@@ -368,7 +368,7 @@ class TestWorkflow(TestCase):
                 "--gh_proxy",
                 f"{expected_gh_proxy}",
                 "--game_version",
-                "classic_wlk",
+                "classic",
                 "--warcraft_base",
                 f"{expected_wow_base}",
                 "us",
@@ -380,7 +380,7 @@ class TestWorkflow(TestCase):
         self.assertEqual(args.db_path, expected_db_path)
         self.assertEqual(args.repo, expected_repo)
         self.assertEqual(args.gh_proxy, expected_gh_proxy)
-        self.assertEqual(args.game_version, GameVersionEnum.CLASSIC_WLK)
+        self.assertEqual(args.game_version, GameVersionEnum.CLASSIC)
         self.assertEqual(args.warcraft_base, expected_wow_base)
         self.assertEqual(args.export_region, RegionEnum.US)
         self.assertEqual(args.export_realms, {"realm1", "realm2"})
@@ -401,7 +401,7 @@ class TestWorkflow(TestCase):
                 "--db_path",
                 f"{db_path}",
                 "--game_version",
-                "classic",
+                "classic_era",
                 "us",
             ]
             args = updater_parse_args(raw_args)
@@ -412,7 +412,7 @@ class TestWorkflow(TestCase):
                 "--db_path",
                 f"{db_path}",
                 "--game_version",
-                "classic",
+                "classic_era",
                 "--warcraft_base",
                 f"{wow_base}",
                 "us",
@@ -454,7 +454,7 @@ class TestWorkflow(TestCase):
                 "--db_path",
                 f"{db_path}",
                 "--game_version",
-                "classic",
+                "classic_era",
                 "us",
             ]
             args = updater_parse_args(raw_args)
@@ -465,7 +465,7 @@ class TestWorkflow(TestCase):
                 "--db_path",
                 f"{db_path}",
                 "--game_version",
-                "classic",
+                "classic_era",
                 "--warcraft_base",
                 f"{wow_base}",
                 "us",
