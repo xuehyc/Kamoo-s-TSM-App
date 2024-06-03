@@ -2,6 +2,33 @@
 
 
 
+## v2.0.0 (2024-06-03)
+
+### Feature
+
+* feat: add tsm installer
+
+move warcraft path utilities to `fs.py` ([`de3c81e`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/de3c81ee359e2fdc13e470fc1dab45e12045c28e))
+
+### Fix
+
+* fix(ui): add unlock on config err ([`5e0febc`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/5e0febc0876e2e2935fd5d1819953fd4a08bb76d))
+
+### Performance
+
+* perf: detatch install tsm from main thread ([`0610595`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/0610595a497468b66b813dc5efa4397853aeb073))
+
+### Refactor
+
+* refactor: rename fs to utils ([`b153dd3`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/b153dd3126f5c99ba8fda999f4e42b8577d1b77c))
+
+### Unknown
+
+* feat (ui): add tsm installer ([`9e0bc79`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/9e0bc79cbaff564e05a31b724f413aa38f09123f))
+
+* update patch digest after cata ([`76d9c6e`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/76d9c6e23160d728893c99c95f9305948804308d))
+
+
 ## v1.2.2 (2024-04-26)
 
 ### Fix
