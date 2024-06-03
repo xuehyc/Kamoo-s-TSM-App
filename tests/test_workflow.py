@@ -23,7 +23,7 @@ from ah.models import (
 from ah.db import DBHelper
 from ah.updater import main as updater_main, parse_args as updater_parse_args
 from ah.tsm_exporter import main as exporter_main, parse_args as exporter_parse_args
-from ah.fs import ensure_path
+from ah.utils import ensure_path
 from ah.defs import SECONDS_IN
 from ah.storage import BinaryFile
 

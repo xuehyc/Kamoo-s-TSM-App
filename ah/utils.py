@@ -1,5 +1,6 @@
 import os
 import sys
+import platform
 from typing import Optional
 
 MOCK_WARCRAFT_BASE = "fake_warcraft_base"
@@ -75,3 +76,16 @@ def validate_warcraft_base(path: str) -> bool:
         return False
 
     return True
+
+
+def get_release_file_name(tag: str) -> str:
+    return (
+        "-".join(
+            [
+                platform.system().lower(),
+                platform.machine().lower(),
+                tag,
+            ]
+        )
+        + ".zip"
+    )

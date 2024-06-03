@@ -9,7 +9,7 @@ import logging
 
 from diff_match_patch import diff_match_patch
 
-from ah.fs import find_warcraft_base
+from ah.utils import find_warcraft_base
 
 __all__ = (
     "PatcherBaseError",

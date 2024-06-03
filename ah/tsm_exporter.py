@@ -22,7 +22,7 @@ from ah.storage import TextFile
 from ah.db import DBHelper, GithubFileForker
 from ah.api import GHAPI
 from ah.cache import Cache
-from ah.fs import find_warcraft_base, validate_warcraft_base
+from ah.utils import find_warcraft_base, validate_warcraft_base
 from ah import config
 
 

@@ -2,7 +2,7 @@ import os
 import urllib3
 
 from ah.defs import SECONDS_IN
-from ah.fs import get_temp_path
+from ah.utils import get_temp_path
 
 BN_CLIENT_ID = os.environ.get("BN_CLIENT_ID")
 BN_CLIENT_SECRET = os.environ.get("BN_CLIENT_SECRET")

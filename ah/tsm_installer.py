@@ -11,7 +11,7 @@ from requests.adapters import HTTPAdapter, Retry
 
 from ah import config
 from ah.models.blizzard import GameVersionEnum
-from ah.fs import find_warcraft_base, validate_warcraft_base
+from ah.utils import find_warcraft_base, validate_warcraft_base
 
 
 class TSMInstaller:
