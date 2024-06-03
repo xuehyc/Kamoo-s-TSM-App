@@ -2,6 +2,15 @@
 
 
 
+## v1.2.2 (2024-04-26)
+
+### Fix
+
+* fix: update LibRealmInfo
+
+add NovaWorldBuffs to patch list, since its load precedes TSM it will displaces it ([`5f917e1`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/5f917e1610870091aab880bab5bbd63bfcf552de))
+
+
 ## v1.2.1 (2024-02-14)
 
 ### Fix
