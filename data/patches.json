@@ -43,22 +43,16 @@
     ],
     [
         "--in_place",
-        "--src_digest",
-        "data/AppHelper.lua.sha256",
         "{warcraft_base}/_retail_/Interface/AddOns/TradeSkillMaster/Core/Lib/AppHelper.lua",
         "data/AppHelper.lua.diff"
     ],
     [
         "--in_place",
-        "--src_digest",
-        "data/AppHelper.lua.sha256",
         "{warcraft_base}/_classic_/Interface/AddOns/TradeSkillMaster/Core/Lib/AppHelper.lua",
         "data/AppHelper.lua.diff"
     ],
     [
         "--in_place",
-        "--src_digest",
-        "data/AppHelper.lua.sha256",
         "{warcraft_base}/_classic_era_/Interface/AddOns/TradeSkillMaster/Core/Lib/AppHelper.lua",
         "data/AppHelper.lua.diff"
     ]
