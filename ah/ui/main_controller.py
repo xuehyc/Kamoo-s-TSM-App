@@ -939,7 +939,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
         def on_data(update_stat: UpdateEnum, version: str) -> None:
             self._logger.info(f"Update status: {update_stat.name}, version: {version}")
-            if update_stat == UpdateEnum.NONE:
+            if update_stat in {UpdateEnum.NONE, UpdateEnum.SKIP}:
                 return
 
             elif update_stat == UpdateEnum.OPTIONAL:

@@ -72,6 +72,7 @@ class UpdateEnum(Enum):
     NONE = 0
     OPTIONAL = 1
     REQUIRED = 2
+    SKIP = 3
 
 
 class GHAPI(BoundCacheMixin):
@@ -226,7 +227,10 @@ class GHAPI(BoundCacheMixin):
         if not latest_version or latest_version <= current_ver:
             return UpdateEnum.NONE, latest_version
 
-        if latest_version.major > current_ver.major:
+        if config.SKIP_UPDATE:
+            return UpdateEnum.SKIP, latest_version
+
+        elif latest_version.major > current_ver.major:
             return UpdateEnum.REQUIRED, latest_version
 
         else:
