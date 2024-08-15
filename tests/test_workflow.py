@@ -385,9 +385,9 @@ class TestWorkflow(TestCase):
         self.assertEqual(args.export_region, RegionEnum.US)
         self.assertEqual(args.export_realms, {"realm1", "realm2"})
 
-    def test_update_and_export(self):
+    def test_update_and_export_retail(self):
         temp = TemporaryDirectory()
-        wow_folder = "_classic_era_"
+        wow_folder = "_retail_"
         db_path = f"{temp.name}/db"
         with temp:
             wow_base = f"{temp.name}/wow"
@@ -401,7 +401,7 @@ class TestWorkflow(TestCase):
                 "--db_path",
                 f"{db_path}",
                 "--game_version",
-                "classic_era",
+                "retail",
                 "us",
             ]
             args = updater_parse_args(raw_args)
@@ -412,7 +412,7 @@ class TestWorkflow(TestCase):
                 "--db_path",
                 f"{db_path}",
                 "--game_version",
-                "classic_era",
+                "retail",
                 "--warcraft_base",
                 f"{wow_base}",
                 "us",
@@ -425,20 +425,79 @@ class TestWorkflow(TestCase):
                 content = f.read()
 
             expected_occurances = [
+                ("AUCTIONDB_COMMODITY_DATA", 1),
+                ("AUCTIONDB_COMMODITY_HISTORICAL", 1),
+                ("AUCTIONDB_COMMODITY_SCAN_STAT", 1),
                 ("AUCTIONDB_REGION_STAT", 1),
                 ("AUCTIONDB_REGION_HISTORICAL", 1),
-                ("Classic-US", 2),
+                ("US", 5),
+                ("BCC-US", 0),
                 ("Hardcore-US", 0),
                 ("AUCTIONDB_REGION_COMMODITY", 0),
+                # (horde + alliance) x (realm11, realm12)
+                ("AUCTIONDB_NON_COMMODITY_DATA", 2),
+                ("AUCTIONDB_NON_COMMODITY_HISTORICAL", 2),
+                ("AUCTIONDB_NON_COMMODITY_SCAN_STAT", 2),
+            ]
+            for expected, count in expected_occurances:
+                self.assertEqual(content.count(expected), count)
+    def test_update_and_export_classic(self):
+        temp = TemporaryDirectory()
+        wow_folder = "_classic_"
+        db_path = f"{temp.name}/db"
+        with temp:
+            wow_base = f"{temp.name}/wow"
+            ensure_path(f"{wow_base}/{wow_folder}")
+            lua_path = (
+                f"{wow_base}/{wow_folder}/Interface/AddOns/"
+                "TradeSkillMaster_AppHelper/AppData.lua"
+            )
+
+            raw_args = [
+                "--db_path",
+                f"{db_path}",
+                "--game_version",
+                "classic",
+                "us",
+            ]
+            args = updater_parse_args(raw_args)
+            bn_api = DummyAPIWrapper()
+            updater_main(**vars(args), bn_api=bn_api)
+
+            raw_args = [
+                "--db_path",
+                f"{db_path}",
+                "--game_version",
+                "classic",
+                "--warcraft_base",
+                f"{wow_base}",
+                "us",
+                "realm11",
+                "realm12",
+            ]
+            args = exporter_parse_args(raw_args)
+            exporter_main(**vars(args))
+            with open(lua_path) as f:
+                content = f.read()
+
+            expected_occurances = [
+                ("AUCTIONDB_COMMODITY_DATA", 0),
+                ("AUCTIONDB_COMMODITY_HISTORICAL", 0),
+                ("AUCTIONDB_COMMODITY_SCAN_STAT", 0),
+                ("AUCTIONDB_REGION_STAT", 1),
+                ("AUCTIONDB_REGION_HISTORICAL", 1),
+                ('"US', 0),
+                ("BCC-US", 2),
+                ("Hardcore-US", 0),
                 # (horde, alliance) x (realm11, realm12)
-                ("AUCTIONDB_REALM_HISTORICAL", 4),
-                ("AUCTIONDB_REALM_SCAN_STAT", 4),
-                ("AUCTIONDB_REALM_DATA", 4),
+                ("AUCTIONDB_NON_COMMODITY_DATA", 4),
+                ("AUCTIONDB_NON_COMMODITY_HISTORICAL", 4),
+                ("AUCTIONDB_NON_COMMODITY_SCAN_STAT", 4),
             ]
             for expected, count in expected_occurances:
                 self.assertEqual(content.count(expected), count)
 
-    def test_update_and_export_hc(self):
+    def test_update_and_export_classic_era_hc(self):
         temp = TemporaryDirectory()
         wow_folder = "_classic_era_"
         db_path = f"{temp.name}/db"
@@ -478,15 +537,18 @@ class TestWorkflow(TestCase):
                 content = f.read()
 
             expected_occurances = [
+                ("AUCTIONDB_COMMODITY_DATA", 0),
+                ("AUCTIONDB_COMMODITY_HISTORICAL", 0),
+                ("AUCTIONDB_COMMODITY_SCAN_STAT", 0),
                 ("AUCTIONDB_REGION_STAT", 1),
                 ("AUCTIONDB_REGION_HISTORICAL", 1),
+                ('"US', 0),
                 ("Classic-US", 0),
                 ("HC-US", 2),
-                ("AUCTIONDB_REGION_COMMODITY", 0),
                 # (horde, alliance) x (realm11, realm12)
-                ("AUCTIONDB_REALM_HISTORICAL", 4),
-                ("AUCTIONDB_REALM_SCAN_STAT", 4),
-                ("AUCTIONDB_REALM_DATA", 4),
+                ("AUCTIONDB_NON_COMMODITY_DATA", 4),
+                ("AUCTIONDB_NON_COMMODITY_HISTORICAL", 4),
+                ("AUCTIONDB_NON_COMMODITY_SCAN_STAT", 4),
             ]
             for expected, count in expected_occurances:
                 self.assertEqual(content.count(expected), count)
