@@ -2,6 +2,23 @@
 
 
 
+## v2.1.0 (2024-08-15)
+
+### Feature
+
+* feat(ui): add env var for skipping update ([`b12df8f`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/b12df8f2761a1a606a308ad151ebfaa117c6844e))
+
+### Fix
+
+* fix(ui): update `AppHelper.lua` patch
+
+disables hash match precondition ([`f7a6ed2`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/f7a6ed25f85c3b0d7be13bf73ebc4e287b0161bd))
+
+* fix: update latest TSM export schema ([`7471269`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/7471269cbca046fffcc72a5c7dc81734c46d9754))
+
+* fix(ui): fix non-exist winreg path ([`f8a6da8`](https://github.com/kamoo1/Kamoo-s-TSM-App/commit/f8a6da864d9661e8fdcf965d1f4c149a68759163))
+
+
 ## v2.0.0 (2024-06-03)
 
 ### Feature
