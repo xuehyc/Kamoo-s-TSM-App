@@ -47,13 +47,16 @@ def find_warcraft_base() -> Optional[str]:
     else:
         return None
 
-    key = winreg.OpenKey(
-        winreg.HKEY_LOCAL_MACHINE,
-        r"SOFTWARE\WOW6432Node\Blizzard Entertainment\World of Warcraft",
-    )
-    path = winreg.QueryValueEx(key, "InstallPath")[0]
-    path = os.path.join(path, "..")
-    return os.path.normpath(path)
+    try:
+        key = winreg.OpenKey(
+            winreg.HKEY_LOCAL_MACHINE,
+            r"SOFTWARE\WOW6432Node\Blizzard Entertainment\World of Warcraft",
+        )
+        path = winreg.QueryValueEx(key, "InstallPath")[0]
+        path = os.path.join(path, "..")
+        return os.path.normpath(path)
+    except Exception:
+        return None
 
 
 _GameVersionEnum = None

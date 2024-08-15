@@ -29,3 +29,4 @@ RELEASED_ARCHIVE_NAME = "archive.zip"
 
 BN_OAUTH_URL = os.environ.get("BN_OAUTH_URL")
 BN_OAUTH_URL_CN = os.environ.get("BN_OAUTH_URL_CN")
+SKIP_UPDATE = os.environ.get("SKIP_UPDATE", "0") == "1"

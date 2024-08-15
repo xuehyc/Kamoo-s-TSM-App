@@ -27,23 +27,23 @@ from ah import config
 
 
 class TSMExporter:
-    REALM_AUCTIONS_EXPORT = {
-        "type": "AUCTIONDB_REALM_DATA",
-        "sources": ["realm_auctions"],
-        "desc": "realm latest scan data",
-        "fields": [
-            "itemString",
-            "minBuyout",
-            "numAuctions",
-            "marketValueRecent",
-        ],
-        "per_faction": True,
-    }
-    REALM_AUCTIONS_COMMODITIES_EXPORTS = [
+    REALM_AUCTIONS_EXPORTS = [
         {
-            "type": "AUCTIONDB_REALM_HISTORICAL",
-            "sources": ["realm_auctions", "commodities"],
-            "desc": "realm historical data, realm auction and commodities",
+            "type": "AUCTIONDB_NON_COMMODITY_DATA",
+            "sources": ["auctions"],
+            "desc": "auction latest market value",
+            "fields": [
+                "itemString",
+                "minBuyout",
+                "numAuctions",
+                "marketValueRecent",
+            ],
+            "per_faction": True,
+        },
+        {
+            "type": "AUCTIONDB_NON_COMMODITY_HISTORICAL",
+            "sources": ["auctions"],
+            "desc": "auction monthly market value",
             "fields": [
                 "itemString",
                 "historical",
@@ -51,9 +51,9 @@ class TSMExporter:
             "per_faction": True,
         },
         {
-            "type": "AUCTIONDB_REALM_SCAN_STAT",
-            "sources": ["realm_auctions", "commodities"],
-            "desc": "realm two week data, realm auction and commodities",
+            "type": "AUCTIONDB_NON_COMMODITY_SCAN_STAT",
+            "sources": ["auctions"],
+            "desc": "auction two week market value",
             "fields": [
                 "itemString",
                 "marketValue",
@@ -61,22 +61,42 @@ class TSMExporter:
             "per_faction": True,
         },
     ]
-    COMMODITIES_EXPORT = {
-        "type": "AUCTIONDB_REGION_COMMODITY",
-        "sources": ["commodities"],
-        "desc": "region commodity data",
-        "fields": [
-            "itemString",
-            "minBuyout",
-            "numAuctions",
-            "marketValueRecent",
-        ],
-    }
+    REGION_COMMODITIES_EXPORTS = [
+        {
+            "type": "AUCTIONDB_COMMODITY_DATA",
+            "sources": ["commodities"],
+            "desc": "commodity latest market value",
+            "fields": [
+                "itemString",
+                "minBuyout",
+                "numAuctions",
+                "marketValueRecent",
+            ],
+        },
+        {
+            "type": "AUCTIONDB_COMMODITY_HISTORICAL",
+            "sources": ["commodities"],
+            "desc": "commodity monthly market value",
+            "fields": [
+                "itemString",
+                "historical",
+            ],
+        },
+        {
+            "type": "AUCTIONDB_COMMODITY_SCAN_STAT",
+            "sources": ["commodities"],
+            "desc": "commodity two week market value",
+            "fields": [
+                "itemString",
+                "marketValue",
+            ],
+        },
+    ]
     REGION_AUCTIONS_COMMODITIES_EXPORTS = [
         {
             "type": "AUCTIONDB_REGION_STAT",
-            "sources": ["region_auctions", "commodities"],
-            "desc": "region two week data, auctions from all realms and commodities",
+            "sources": ["auctions", "commodities"],
+            "desc": "region auctions two week data",
             "fields": [
                 "itemString",
                 "regionMarketValue",
@@ -84,8 +104,8 @@ class TSMExporter:
         },
         {
             "type": "AUCTIONDB_REGION_HISTORICAL",
-            "sources": ["region_auctions", "commodities"],
-            "desc": "region historical data, auctions from all realms and commodities",
+            "sources": ["auctions", "commodities"],
+            "desc": "region auctions monthly data",
             "fields": [
                 "itemString",
                 "regionHistorical",
@@ -251,7 +271,7 @@ class TSMExporter:
         for cate in RealmCategoryEnum:
             cate_should_export[cate] = False
 
-        # auctions + commodities (if applicable) for all realms under this category
+        # tracks auctions + commodities (if applicable) for all realms under this category
         cate_data = dict()
         for cate in RealmCategoryEnum:
             cate_data[cate] = MapItemStringMarketValueRecords()
@@ -268,16 +288,19 @@ class TSMExporter:
             commodity_data = None
 
         if commodity_data:
+            # only retail has commodities, it only has `RealmCategoryEnum.DEFAULT`
             cate_data[RealmCategoryEnum.DEFAULT].extend(commodity_data)
-            self.export_append_data(
-                self.export_file,
-                commodity_data,
-                self.COMMODITIES_EXPORT["fields"],
-                self.COMMODITIES_EXPORT["type"],
-                namespace.region.upper(),
-                ts_update_start,
-                ts_update_end,
-            )
+
+            for commodity_export in self.REGION_COMMODITIES_EXPORTS:
+                self.export_append_data(
+                    self.export_file,
+                    commodity_data,
+                    commodity_export["fields"],
+                    commodity_export["type"],
+                    namespace.region.upper(),
+                    ts_update_start,
+                    ts_update_end,
+                )
 
         if namespace.game_version == GameVersionEnum.RETAIL:
             factions = [None]
@@ -312,34 +335,18 @@ class TSMExporter:
                 else:
                     cate_should_export[category] = True
 
-                if commodity_data:
-                    realm_auctions_commodities_data = MapItemStringMarketValueRecords()
-                    realm_auctions_commodities_data.extend(commodity_data)
-                    realm_auctions_commodities_data.extend(auction_data)
-                else:
-                    realm_auctions_commodities_data = auction_data
-
                 for realm in sub_export_realms:
                     if faction is None:
                         tsm_realm = realm
                     else:
                         tsm_realm = f"{realm}-{faction.get_full_name()}"
 
-                    self.export_append_data(
-                        self.export_file,
-                        auction_data,
-                        self.REALM_AUCTIONS_EXPORT["fields"],
-                        self.REALM_AUCTIONS_EXPORT["type"],
-                        tsm_realm,
-                        ts_update_start,
-                        ts_update_end,
-                    )
-                    for export_realm in self.REALM_AUCTIONS_COMMODITIES_EXPORTS:
+                    for realm_auctions_export in self.REALM_AUCTIONS_EXPORTS:
                         self.export_append_data(
                             self.export_file,
-                            realm_auctions_commodities_data,
-                            export_realm["fields"],
-                            export_realm["type"],
+                            auction_data,
+                            realm_auctions_export["fields"],
+                            realm_auctions_export["type"],
                             tsm_realm,
                             ts_update_start,
                             ts_update_end,
@@ -367,16 +374,13 @@ class TSMExporter:
                 tsm_region = region
 
             # need to sort because it's records are from multiple realms
-            # note that we skipped `realm_auctions_commodities_data`, due to
-            # no overlapping item strings between auctions and commodities
             data.sort()
-            for region_export in self.REGION_AUCTIONS_COMMODITIES_EXPORTS:
-                # reset `ts_compressed` because the result
+            for region_a_c_export in self.REGION_AUCTIONS_COMMODITIES_EXPORTS:
                 self.export_append_data(
                     self.export_file,
                     data,
-                    region_export["fields"],
-                    region_export["type"],
+                    region_a_c_export["fields"],
+                    region_a_c_export["type"],
                     tsm_region,
                     ts_update_start,
                     ts_update_end,
