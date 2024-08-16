@@ -206,7 +206,7 @@ class TestModels(TestCase):
             {"type": 9, "value": 30},
             {"type": 28, "value": 1079},
         ]
-        ret = "i:25291::i66"
+        ret = "i:25291::i130"
         i = ItemString.from_auction_item(
             AuctionItem(
                 id=25291,
@@ -221,7 +221,7 @@ class TestModels(TestCase):
             {"type": 9, "value": 70},
             {"type": 28, "value": 2524},
         ]
-        ret = "i:199038::i302"
+        ret = "i:199038::i357"
         i = ItemString.from_auction_item(
             AuctionItem(
                 id=199038,
@@ -236,7 +236,7 @@ class TestModels(TestCase):
             {"type": 9, "value": 70},
             {"type": 28, "value": 2475},
         ]
-        ret = "i:198996::i292"
+        ret = "i:198996::i357"
         i = ItemString.from_auction_item(
             AuctionItem(
                 id=198996,
@@ -251,7 +251,7 @@ class TestModels(TestCase):
             {"type": 9, "value": 58},
             {"type": 28, "value": 1888},
         ]
-        ret = "i:24955::i158"
+        ret = "i:24955::i296"
         i = ItemString.from_auction_item(
             AuctionItem(
                 id=24955,
