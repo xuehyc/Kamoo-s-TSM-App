@@ -71,6 +71,7 @@ class RegionEnum(StrEnum_):
     EU = "eu"
     KR = "kr"
     TW = "tw"
+    CN = "cn"
 
 
 class NameSpaceCategoriesEnum(StrEnum_):
@@ -135,6 +136,8 @@ class Namespace(_BaseModel):
             return "ko_KR"
         elif self.region == RegionEnum.TW:
             return "zh_TW"
+        elif self.region == RegionEnum.CN:
+            return "zh_CN"
         else:
             return "en_US"
 
